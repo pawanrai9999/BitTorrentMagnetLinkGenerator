@@ -33,7 +33,12 @@ import androidx.compose.ui.window.application
 @Composable
 @Preview
 fun App() {
-    var text by remember { mutableStateOf("Hello, World!") }
+    val trackerGroups = arrayOf("STABLE", "UDP", "HTTP", "LIVE", "ALL")
+    var hash by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf("") }
+    var selectedTrackerGroup by remember { mutableStateOf(trackerGroups[0]) }
+    var customTrackerList by remember { mutableStateOf("") }
+
 
     MaterialTheme {
         Column(
@@ -41,28 +46,30 @@ fun App() {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(8.dp)
         ) {
-            magnetHash()
+            magnetHash(hash, onHashChange = { hash = it })
             Spacer(modifier = Modifier.size(4.dp))
-            torrentName()
+            torrentName(name, onNameChange = { name = it })
             Spacer(modifier = Modifier.size(4.dp))
             Row {
-                selectTrackers()
+                selectTrackers(
+                    trackerGroups = trackerGroups,
+                    selectedTrackerGroup = selectedTrackerGroup,
+                    onTrackerGroupChange = { selectedTrackerGroup = it }
+                )
                 Button(
                     onClick = {},
                     modifier = Modifier.align(Alignment.CenterVertically)
                 ) { Text(text = "Genereate Magnet Link") }
             }
             Spacer(modifier = Modifier.size(4.dp))
-            customTrackers()
+            customTrackers(customTrackerList = customTrackerList, onCustomTrackersChange = { customTrackerList = it })
         }
     }
 }
 
 @Composable
-fun selectTrackers() {
-    val trackersList = arrayOf("STABLE", "UDP", "HTTP", "LIVE", "ALL")
+fun selectTrackers(trackerGroups: Array<String>, selectedTrackerGroup: String, onTrackerGroupChange: (String) -> Unit) {
     var isDropdownExpanded by remember { mutableStateOf(false) }
-    var selectedTracker by remember { mutableStateOf(trackersList[0]) }
     var textFieldSize by remember { mutableStateOf(Size.Zero) }
 
     var icon = if (isDropdownExpanded) {
@@ -73,8 +80,8 @@ fun selectTrackers() {
 
     Column(modifier = Modifier.padding(16.dp)) {
         OutlinedTextField(
-            value = selectedTracker,
-            onValueChange = { selectedTracker = it },
+            value = selectedTrackerGroup,
+            onValueChange = onTrackerGroupChange,
             modifier = Modifier.onGloballyPositioned { coordinates ->
                 textFieldSize = coordinates.size.toSize()
             },
@@ -92,10 +99,10 @@ fun selectTrackers() {
                 with(LocalDensity.current) { textFieldSize.width.toDp() }
             )
         ) {
-            trackersList.forEach { label ->
+            trackerGroups.forEach { label ->
                 DropdownMenuItem(
                     onClick = {
-                        selectedTracker = label
+                        onTrackerGroupChange(label)
                         isDropdownExpanded = false
                     }
                 ) {
@@ -107,14 +114,10 @@ fun selectTrackers() {
 }
 
 @Composable
-fun magnetHash() {
-    var hash by remember { mutableStateOf("") }
-
+fun magnetHash(hash: String, onHashChange: (String) -> Unit) {
     TextField(
         value = hash,
-        onValueChange = {
-            hash = it
-        },
+        onValueChange = onHashChange,
         label = { Text(text = "Magnet Hash") },
         placeholder = { Text(text = "443c7602b4fde83d1154d6d9da48808418b181b6") },
         modifier = Modifier.fillMaxWidth(),
@@ -123,26 +126,20 @@ fun magnetHash() {
 }
 
 @Composable
-fun customTrackers() {
-    var trackers by remember { mutableStateOf("") }
-
+fun customTrackers(customTrackerList: String, onCustomTrackersChange: (String) -> Unit) {
     OutlinedTextField(
-        value = trackers,
-        onValueChange = { trackers = it },
+        value = customTrackerList,
+        onValueChange = onCustomTrackersChange,
         label = { Text(text = "Custom Tracker(one per line)") },
         modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(10.dp)
     )
 }
 
 @Composable
-fun torrentName() {
-    var name by remember { mutableStateOf("") }
-
+fun torrentName(name: String, onNameChange: (String) -> Unit) {
     TextField(
         value = name,
-        onValueChange = {
-            name = it
-        },
+        onValueChange = onNameChange,
         label = { Text(text = "Name") },
         placeholder = { Text(text = "Ubuntu.iso") },
         modifier = Modifier.fillMaxWidth(),
