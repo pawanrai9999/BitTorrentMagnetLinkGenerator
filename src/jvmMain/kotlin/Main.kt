@@ -89,7 +89,8 @@ fun selectTrackers(trackerGroups: Array<String>, selectedTrackerGroup: String, o
             trailingIcon = {
                 Icon(icon, "dropdown", Modifier.clickable { isDropdownExpanded = !isDropdownExpanded })
             },
-            readOnly = true
+            readOnly = true,
+            singleLine = true
         )
 
         DropdownMenu(
@@ -121,7 +122,7 @@ fun magnetHash(hash: String, onHashChange: (String) -> Unit) {
         label = { Text(text = "Magnet Hash") },
         placeholder = { Text(text = "443c7602b4fde83d1154d6d9da48808418b181b6") },
         modifier = Modifier.fillMaxWidth(),
-        maxLines = 1
+        singleLine = true
     )
 }
 
@@ -143,7 +144,7 @@ fun torrentName(name: String, onNameChange: (String) -> Unit) {
         label = { Text(text = "Name") },
         placeholder = { Text(text = "Ubuntu.iso") },
         modifier = Modifier.fillMaxWidth(),
-        maxLines = 1
+        singleLine = true
     )
 }
 
