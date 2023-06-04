@@ -80,10 +80,14 @@ fun trackerListFromString(trackerString: String): List<String> {
     }
 }
 
-fun handleGenerateMagnetLink(selectedTrackerGroup: String) {
+fun handleGenerateMagnetLink(infoHash: String, name: String, selectedTrackerGroup: String, customTrackers: String) {
     val trackerString = getTrackers(selectedTrackerGroup)
     val trackers = trackerString?.let { trackerListFromString(trackerString = it) }
-    println(trackers)
+    val customTrackerList: List<String>
+    if (customTrackers.isNotBlank()) {
+        customTrackerList = trackerListFromString(customTrackers)
+    }
+
 }
 
 @Composable
@@ -114,7 +118,7 @@ fun App() {
                 )
                 Button(
                     onClick = {
-                        handleGenerateMagnetLink(selectedTrackerGroup)
+                        handleGenerateMagnetLink(hash, name, selectedTrackerGroup, customTrackerList)
                     },
                     modifier = Modifier.align(Alignment.CenterVertically)
                 ) { Text(text = "Genereate Magnet Link") }
