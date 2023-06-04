@@ -30,6 +30,9 @@ import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 
+
+val API_URL = "https://newtrackon.com/api"
+
 @Composable
 @Preview
 fun App() {
