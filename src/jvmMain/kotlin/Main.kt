@@ -43,7 +43,6 @@ fun makeRequest(URL: String): String? {
         .uri(URI.create("$API_URL/stable"))
         .build()
     val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-    println(response.body())
     return response.body()
 }
 
@@ -74,6 +73,19 @@ fun getTrackers(trackerGroup: String): String? {
     }
 }
 
+fun trackerListFromString(trackerString: String): List<String> {
+    val trackers = trackerString.split("\n")
+    return trackers.filter {
+        it.isNotBlank()
+    }
+}
+
+fun handleGenerateMagnetLink(selectedTrackerGroup: String) {
+    val trackerString = getTrackers(selectedTrackerGroup)
+    val trackers = trackerString?.let { trackerListFromString(trackerString = it) }
+    println(trackers)
+}
+
 @Composable
 @Preview
 fun App() {
@@ -102,7 +114,7 @@ fun App() {
                 )
                 Button(
                     onClick = {
-                        getTrackers(selectedTrackerGroup)
+                        handleGenerateMagnetLink(selectedTrackerGroup)
                     },
                     modifier = Modifier.align(Alignment.CenterVertically)
                 ) { Text(text = "Genereate Magnet Link") }
