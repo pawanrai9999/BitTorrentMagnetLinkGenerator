@@ -24,7 +24,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.Window
@@ -80,14 +82,24 @@ fun trackerListFromString(trackerString: String): List<String> {
     }
 }
 
-fun handleGenerateMagnetLink(infoHash: String, name: String, selectedTrackerGroup: String, customTrackers: String) {
+fun handleGenerateMagnetLink(
+    infoHash: String,
+    name: String,
+    selectedTrackerGroup: String,
+    customTrackers: String
+): String {
     val trackerString = getTrackers(selectedTrackerGroup)
     val trackers = trackerString?.let { trackerListFromString(trackerString = it) }
-    val customTrackerList: List<String>
+    var customTrackerList: List<String> = listOf("")
     if (customTrackers.isNotBlank()) {
         customTrackerList = trackerListFromString(customTrackers)
     }
-
+    val magnetURI = Magnet.createMagnetURL(
+        infoHash,
+        name,
+        trackers?.plus(customTrackerList) ?: customTrackerList
+    )
+    return magnetURI
 }
 
 @Composable
@@ -98,8 +110,8 @@ fun App() {
     var name by remember { mutableStateOf("") }
     var selectedTrackerGroup by remember { mutableStateOf(trackerGroups[0]) }
     var customTrackerList by remember { mutableStateOf("") }
-
-
+    var magnetURI by remember { mutableStateOf("") }
+    val clipboardManager = LocalClipboardManager.current
     MaterialTheme {
         Column(
             verticalArrangement = Arrangement.Center,
@@ -118,13 +130,23 @@ fun App() {
                 )
                 Button(
                     onClick = {
-                        handleGenerateMagnetLink(hash, name, selectedTrackerGroup, customTrackerList)
+                        magnetURI = handleGenerateMagnetLink(hash, name, selectedTrackerGroup, customTrackerList)
                     },
                     modifier = Modifier.align(Alignment.CenterVertically)
                 ) { Text(text = "Genereate Magnet Link") }
             }
             Spacer(modifier = Modifier.size(4.dp))
-            customTrackers(customTrackerList = customTrackerList, onCustomTrackersChange = { customTrackerList = it })
+            if (magnetURI.isNotBlank()) {
+                Button(onClick = {
+                    clipboardManager.setText(AnnotatedString(magnetURI))
+                    
+                }) {
+                    Text(text = "Copy Magnet URI")
+                }
+            }
+            customTrackers(
+                customTrackerList = customTrackerList,
+                onCustomTrackersChange = { customTrackerList = it })
         }
     }
 }

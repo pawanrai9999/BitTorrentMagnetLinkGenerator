@@ -36,4 +36,16 @@ class Magnet(val infoHash: String) {
         }
         return magnetURI
     }
+
+    companion object {
+        fun createMagnetURL(infoHash: String, name: String, trackers: List<String>): String {
+            var magnetURI = "magnet:?xt=urn:btih:${infoHash}&dn=${name}"
+            trackers.forEach { tracker ->
+                if (tracker.isNotBlank()) {
+                    magnetURI = "$magnetURI&tr=${URLEncoder.encode(tracker, Charsets.UTF_8)}"
+                }
+            }
+            return magnetURI
+        }
+    }
 }
