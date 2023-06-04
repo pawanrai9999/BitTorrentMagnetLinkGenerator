@@ -72,7 +72,7 @@ fun selectTrackers(trackerGroups: Array<String>, selectedTrackerGroup: String, o
     var isDropdownExpanded by remember { mutableStateOf(false) }
     var textFieldSize by remember { mutableStateOf(Size.Zero) }
 
-    var icon = if (isDropdownExpanded) {
+    val icon = if (isDropdownExpanded) {
         Icons.Filled.KeyboardArrowUp
     } else {
         Icons.Filled.KeyboardArrowDown
