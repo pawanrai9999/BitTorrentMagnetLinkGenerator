@@ -29,9 +29,50 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
 
 
 val API_URL = "https://newtrackon.com/api"
+
+fun makeRequest(URL: String): String? {
+    val client = HttpClient.newBuilder().build()
+    val request = HttpRequest.newBuilder()
+        .uri(URI.create("$API_URL/stable"))
+        .build()
+    val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+    println(response.body())
+    return response.body()
+}
+
+fun getTrackers(trackerGroup: String): String? {
+
+    when (trackerGroup) {
+        "STABLE" -> {
+            return makeRequest("$API_URL/stable")
+        }
+
+        "UDP" -> {
+            return makeRequest("$API_URL/udp")
+        }
+
+        "HTTP" -> {
+            return makeRequest("$API_URL/http")
+        }
+
+        "LIVE" -> {
+            return makeRequest("$API_URL/live")
+        }
+
+        "ALL" -> {
+            return makeRequest("$API_URL/all")
+        }
+
+        else -> return null
+    }
+}
 
 @Composable
 @Preview
@@ -60,7 +101,9 @@ fun App() {
                     onTrackerGroupChange = { selectedTrackerGroup = it }
                 )
                 Button(
-                    onClick = {},
+                    onClick = {
+                        getTrackers(selectedTrackerGroup)
+                    },
                     modifier = Modifier.align(Alignment.CenterVertically)
                 ) { Text(text = "Genereate Magnet Link") }
             }
