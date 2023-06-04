@@ -13,8 +13,10 @@
  */
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -23,6 +25,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
@@ -50,6 +53,8 @@ fun App() {
                     modifier = Modifier.align(Alignment.CenterVertically)
                 ) { Text(text = "Genereate Magnet Link") }
             }
+            Spacer(modifier = Modifier.size(4.dp))
+            customTrackers()
         }
     }
 }
@@ -115,6 +120,19 @@ fun magnetHash() {
         placeholder = { Text(text = "443c7602b4fde83d1154d6d9da48808418b181b6") },
         modifier = Modifier.fillMaxWidth(),
         maxLines = 1
+    )
+}
+
+@Composable
+fun customTrackers() {
+    var trackers by remember { mutableStateOf("") }
+
+    TextField(
+        value = trackers,
+        onValueChange = { trackers = it },
+        label = { Text(text = "Custom Tracker(one per line)") },
+        modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(10.dp)
+            .border(width = 2.dp, color = Color.Black, shape = RoundedCornerShape(8.dp))
     )
 }
 
